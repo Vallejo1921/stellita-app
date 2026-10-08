@@ -51,8 +51,8 @@ export function useMarketingSeo({
     document.title = title
     if (description) setMeta('name', 'description', description)
     setCanonical(url)
-    setMeta('name', 'robots', indexable ? 'index, follow' : 'noindex, follow')
-    setMeta('name', 'robots', noindex ? 'noindex, follow' : 'index, follow')
+    const shouldIndex = indexable && !noindex
+    setMeta('name', 'robots', shouldIndex ? 'index, follow' : 'noindex, follow')
 
     setMeta('property', 'og:type', 'website')
     setMeta('property', 'og:site_name', 'Stellita')
@@ -71,9 +71,5 @@ export function useMarketingSeo({
       setMeta('name', 'robots', prevRobots)
       setCanonical(prevCanonical)
     }
-  }, [title, description, path, indexable])
-      setMeta('name', 'robots', 'index, follow')
-      setCanonical(`${SITE}/`)
-    }
-  }, [title, description, path, noindex])
+  }, [title, description, path, indexable, noindex])
 }
