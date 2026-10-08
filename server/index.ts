@@ -28,13 +28,34 @@ app.use(
 app.use(cookieParser())
 app.use(express.json({ limit: '5mb' }))
 
-// Lightweight request log: method, path, status, and whether a session cookie
-// was present/sent — to debug auth in production.
+import { logger } from './_lib/logger.js'
+
+// Structured request logging with level control
 app.use((req, res, next) => {
+  if (req.path === '/health') return next()
+
   const start = Date.now()
-  const hasCookie = Object.keys((req.cookies as Record<string, string>) ?? {}).some((k) => k.startsWith('sb-'))
   res.on('finish', () => {
-    console.log(`[req] ${req.method} ${req.path} → ${res.statusCode} ${Date.now() - start}ms origin=${req.headers.origin ?? '-'} sbCookie=${hasCookie} setCookie=${res.getHeader('set-cookie') ? 'yes' : 'no'}`)
+    const durationMs = Date.now() - start
+    const hasCookie = Object.keys((req.cookies as Record<string, string>) ?? {}).some((k) => k.startsWith('sb-'))
+    const setCookie = Boolean(res.getHeader('set-cookie'))
+
+    // Base request log in info level (no cookie presence)
+    logger.info(`${req.method} ${req.path} → ${res.statusCode} ${durationMs}ms`, {
+      method: req.method,
+      path: req.path,
+      status: res.statusCode,
+      durationMs,
+    })
+
+    // Diagnostics in debug level only
+    logger.debug(`${req.method} ${req.path} auth diagnostics`, {
+      method: req.method,
+      path: req.path,
+      origin: req.headers.origin ?? '-',
+      sbCookie: hasCookie,
+      setCookie,
+    })
   })
   next()
 })
