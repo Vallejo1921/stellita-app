@@ -13,7 +13,6 @@ import { fetchShared } from '../lib/backend'
 import { useFreighterBridge } from '../wallet/freighterBridge'
 import { useMarketingSeo } from '../marketing/seo'
 import { Logo, Wordmark } from '../marketing/shared'
-import { useMarketingSeo } from '../marketing/seo'
 import type { ChatMessage, DeployedContract, FileTree } from '../../shared/types'
 
 type Loaded = {
