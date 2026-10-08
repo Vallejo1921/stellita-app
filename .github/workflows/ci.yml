@@ -33,6 +33,9 @@ jobs:
       - name: Check bundle budget
         run: pnpm check:bundle
 
+      - name: Check forbidden patterns
+        run: pnpm check:forbidden-patterns
+
   migrations:
     runs-on: ubuntu-latest
     timeout-minutes: 15
